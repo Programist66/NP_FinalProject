@@ -9,8 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\TcpLib\TcpLib.csproj" />
-    <ProjectReference Include="..\CommandLib\FinalProjectLib.csproj" />
+    <ProjectReference Include="..\TcpLib\TcpLib.csproj"/>
+    <ProjectReference Include="..\CommandLib\FinalProjectLib.csproj"/>
   </ItemGroup>
 
 </Project>
