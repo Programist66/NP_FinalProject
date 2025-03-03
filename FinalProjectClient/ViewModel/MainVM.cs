@@ -110,15 +110,24 @@ namespace FinalProjectClient.ViewModel
                         }
                         if (GameField.Status == GameStatus.CrossWin)
                         {
-                            
+                            if(MessageBox.Show("Победил крестик!!") == MessageBoxResult.OK) 
+                            {
+                                App.Current.Shutdown();
+                            }
                         }
                         else if (GameField.Status == GameStatus.ZeroWin)
                         {
-                            
+                            if (MessageBox.Show("Победил нолик!!") == MessageBoxResult.OK)
+                            {
+                                App.Current.Shutdown();
+                            }
                         }
                         else if (GameField.Status == GameStatus.Draw)
                         {
-
+                            if (MessageBox.Show("Ничья!!") == MessageBoxResult.OK)
+                            {
+                                App.Current.Shutdown();
+                            }
                         }
                     }
                     else
