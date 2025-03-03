@@ -4,8 +4,8 @@ namespace CommandLib
 {
     public class Command
     {
-        public ChatCommand? ChatCommand { get; private set; } = null;
-        public MoveCommand? MoveCommand { get; private set; } = null;
+        public ChatCommand? ChatCommand { get; private set; }
+        public MoveCommand? MoveCommand { get; private set; }
         public GameFieldCommand? GameFieldCommand { get; private set; }
 
         public StatusCode? StatusCode { get; set; }
@@ -15,16 +15,38 @@ namespace CommandLib
         public Command(ChatCommand chatCommand)
         {
             ChatCommand = chatCommand;
+            MoveCommand = null;
+            GameFieldCommand = null;
         }
 
         public Command(MoveCommand moveCommand)
         {
             MoveCommand = moveCommand;
+            GameFieldCommand = null;
+            ChatCommand = null;
         }
 
         public Command(GameFieldCommand gameFieldCommand)
         {
             GameFieldCommand = gameFieldCommand;
+            MoveCommand = null;
+            ChatCommand = null;
+        }
+
+        public override string ToString()
+        {
+            if (ChatCommand is not null)
+            {
+                return "отправлено сообщение в чат";
+            }
+            if (MoveCommand is not null)
+            {
+                return "сделали ход";
+            }
+            else
+            {
+                return "отправили всем поле";
+            }
         }
     }
 
@@ -33,19 +55,19 @@ namespace CommandLib
         public string Text { get; private set; } = "";
         public string Author { get; private set; } = "";
 
-        public ChatCommand(string text, string author)
+        public ChatCommand(Message message)
         {
-            Text = text;
-            Author = author;
+            Text = message.Text;
+            Author = message.Author;
         }
     }
 
     public class MoveCommand 
     {
-        public short Index {  get; private set; }
+        public int Index {  get; private set; }
         public string Element { get; private set; } = "";
 
-        public MoveCommand(short index, string element)
+        public MoveCommand(int index, string element)
         {
             Index = index;
             Element = element;

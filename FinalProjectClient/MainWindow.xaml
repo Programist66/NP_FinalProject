@@ -4,15 +4,27 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FinalProjectClient"
+        xmlns:vm="clr-namespace:FinalProjectClient.ViewModel"
+        xmlns:hc ="clr-namespace:FinalProjectClient.HelperClasses"
+        xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
-        Title="Game" Height="300" Width="500" >
+        d:DataContext="{d:DesignInstance vm:MainVM}"
+        Title="Game" Height="300" Width="500">
+    <Window.Resources>
+        <hc:IndexConverter x:Key="IndexConverter"/>
+    </Window.Resources>
+    <b:Interaction.Triggers>
+        <b:EventTrigger EventName="Closing">
+            <b:InvokeCommandAction Command="{Binding CloseCommand}"/>
+        </b:EventTrigger>
+    </b:Interaction.Triggers>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*"/>
             <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
 
-        <ItemsControl ItemsSource="{Binding Board}">
+        <ItemsControl ItemsSource="{Binding GameField.cells}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <UniformGrid Rows="25" Columns="25"/>
@@ -21,11 +33,11 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Button Content="{Binding Value}" 
-                            Command="{Binding DataContext.MakeMoveCommand, 
+                            Command="{Binding MakeMoveCommand, 
                         RelativeSource={RelativeSource AncestorType=Window}}" 
-                            CommandParameter="{
-                        Binding RelativeSource={RelativeSource AncestorType=ItemsControl},
-                        Path=Items.IndexOf}"/>
+                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl},
+                        Path=ItemContainerGenerator.IndexOf, 
+                        Converter={StaticResource IndexConverter}}"/>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
@@ -39,7 +51,7 @@
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBox x:Name="ChatInput" VerticalAlignment="Bottom"/>
+                <TextBox Text="{Binding Text}" VerticalAlignment="Bottom"/>
                 <Button Content="Send" Command="{Binding SendChatCommand}" 
                         Grid.Column="1" VerticalAlignment="Bottom"/>
             </Grid>            

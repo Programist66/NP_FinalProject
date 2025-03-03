@@ -24,5 +24,17 @@ namespace FinalProjectLib
                 cells.Add(new Cell(""));
             }
         }
+
+        public void SwitchCurrentPlayer() 
+        {
+            if (CurrentPlayer!.Id == CrossPlayer!.Id)
+            {
+                CurrentPlayer = ZeroPlayer;
+            }
+            else
+            {
+                CurrentPlayer = CrossPlayer;
+            }
+        }
     }
 }

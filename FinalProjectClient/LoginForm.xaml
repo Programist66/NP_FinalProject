@@ -1,0 +1,24 @@
+﻿<Window x:Class="FinalProjectClient.LoginForm"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FinalProjectClient"
+        xmlns:vm="clr-namespace:FinalProjectClient.ViewModel"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance vm:LoginVM}"
+        Title="LoginForm" Height="200" Width="300" 
+        ResizeMode="CanMinimize">
+    <StackPanel VerticalAlignment="Center">
+        <TextBlock Text="Имя" Padding="0 10 0 0"/>
+        <TextBox Text="{Binding Name}"/>
+        <TextBlock Text="Ip" Padding="0 10 0 0"/>
+        <TextBox Text="{Binding IP}"/>
+        <TextBlock Text="Port" Padding="0 10 0 0"/>
+        <TextBox Text="{Binding Port}"/>
+
+        <Button Command="{Binding ConnectCommand}">
+            Подключиться
+        </Button>
+    </StackPanel>
+</Window>

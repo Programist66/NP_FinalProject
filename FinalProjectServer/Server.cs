@@ -27,8 +27,9 @@ namespace FinalProjectServer
 
             while (count < 2)
             {
-                TcpClient client = await listener.AcceptTcpClientAsync();
                 count++;
+                Console.WriteLine(count);
+                TcpClient client = await listener.AcceptTcpClientAsync();
                 Member member = new Member(client, count);
                 Console.WriteLine($"Подключился клиент {member}");
                 lock (members)
@@ -52,14 +53,16 @@ namespace FinalProjectServer
                         gameField.ZeroPlayer = member;
                     }
                 }
-
-                _ = ListenToClient(member);
+                //_ = ListenToClient(member);
+                _ = Task.Run(() => {_ = ListenToClient(member); });          
             }
+            Command command;
             lock (gameField) 
             {
                 gameField.Status = GameStatus.Process;
+                command = new Command(new GameFieldCommand(gameField));
             }
-            Command command = new Command(new GameFieldCommand(gameField));
+            
             command.StatusCode = StatusCode.OK;
             await SendCommandToAll(command);
         }
@@ -77,10 +80,18 @@ namespace FinalProjectServer
             {
                 await member.TcpClient.SendString("O");
             }
-
+            await member.TcpClient.SendInt32(member.Id);
             while (true)
             {
+                lock (gameField)
+                {
+                    if (gameField.Status != GameStatus.Process)
+                    {
+                        continue;
+                    }
+                }
                 Command command = await member.TcpClient.ReceiveAsJson<Command>();
+                Console.WriteLine(command);
                 if (command.ChatCommand is not null) 
                 {
                     if (command.ChatCommand.Text == "" || command.ChatCommand.Author == "")
@@ -124,12 +135,23 @@ namespace FinalProjectServer
                         command.StatusCode = StatusCode.NotYourMove;
                         await member.TcpClient.SendAsJson(command);
                         continue;
-                    }                   
-
+                    }
                     if (cellsCopy[command.MoveCommand.Index].Value == "")
                     {
                         await Task.Run(() => UpdateGameField(command.MoveCommand.Index, command.MoveCommand.Element));
                     }
+                    else
+                    {
+                        command.StatusCode = StatusCode.IncorrectMove;
+                    }
+                    command.StatusCode = StatusCode.OK;
+                    await member.TcpClient.SendAsJson(command);
+
+                    lock (gameField)
+                    {
+                        gameField.SwitchCurrentPlayer();
+                    }
+
                     command = new Command(new GameFieldCommand(gameField));
                     command.StatusCode = StatusCode.OK;
                     await SendCommandToAll(command);
@@ -144,6 +166,7 @@ namespace FinalProjectServer
 
         private async Task SendCommandToAll(Command command) 
         {
+            Console.WriteLine(command);
             IReadOnlyList<Member> membersCopy;
             lock (members)
             {
